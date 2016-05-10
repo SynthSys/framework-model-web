@@ -1,0 +1,10 @@
+body {
+    background: #fafafa;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #333;
+}
+
+.my-chart {
+    margin-bottom: 30px;
+    height: 200px;
+}

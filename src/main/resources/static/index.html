@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en-us" ng-app="FMSimulator">
+    <head>
+        <title>Digital Arabidopsis</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <meta charset="UTF-8">
+
+        <!-- load bootstrap and fontawesome via CDN -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
+
+        <!-- load angular via CDN -->
+        <script src="//code.angularjs.org/1.3.0-rc.1/angular.min.js"></script>
+        <script src="//code.angularjs.org/1.3.0-rc.1/angular-route.min.js"></script>
+        
+        <!-- load d3 -->
+        <script src="node_modules/n3-charts/node_modules/d3/d3.min.js"></script>
+        
+        <!-- Angular-nvD3 for charts -->
+        <!-- ACH: COULD NOT GET THESE PATHS TO WORK - SO COPIED EVRYTHING TO TOP LEVEL!!
+        <script src="node_modules/angular-nvd3/node_modules/nvd3/build/nv.d3.js"></script> 
+        <script src="node_modules/angular-nvd3/dist/angular-nvd3.js"></script>
+        <link rel="stylesheet" href="angular-nvd3/node_modules/nvd3/build/nv.d3.css">
+        -->
+        <script src="nv.d3.js"></script> 
+        <script src="angular-nvd3.js"></script>
+        <link rel="stylesheet" href="nv.d3.css">
+        
+        <script src="app.js"></script>
+        
+        <!-- bootstrap viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link rel="stylesheet" type="text/css" media="screen" href="main.css">
+        
+    </head>
+    
+    <body>
+
+        <div class="container">
+            <div ng-controller="mainController">
+
+                <h1>Digital Arabidopsis Simulator</h1>
+
+                <p>
+                    This simulator runs the  Arabidopsis Framework Model v2.1 (Chew et al., unpublished), 
+                    which shares many components with the published Framework Model v1.0 
+                    (<a href="http://www.ncbi.nlm.nih.gov/pubmed/25197087">Chew et al. 2014</a>). 
+                    FMv2.1 additionally models the control of starch degradation, hypocotyl elongation and 
+                    flowering time by the circadian clock, using published models 
+                    (<a href="http://dx.doi.org/10.1098/rsif.2013.0979">Seaton et al. 2014</a>; 
+                    <a href="http://dx.doi.org/10.15252/msb.20145766">Seaton et al. 2015</a>).
+                </p>
+                
+                <p>
+                    To run a simulation enter values for the environmental parameters 
+                    and click on the Run button. Data plots for the simulation will
+                    appear when the simulation has completed.  This may take a few
+                    minutes. You do not have to wait for a simulation to complete
+                    before start to run another simulation - just change the parameters
+                    and click Run again.
+                </p>
+                <p>
+                    Please be aware that refreshing the page will remove all simulation results.
+                </p>
+
+                <!-- Graph plots -->
+                <div class='panel panel-default' ng-if="plotData.length > 0">
+                    <div class='panel-body'>
+                        <div class='row col-md-6' ng-repeat="plot in plots">
+                            <div ng-if="(!plot.environmental) || flags.showEnvironmentalPlots" class="my-chart">
+                                 <nvd3 options="plot" data="plotData"></nvd3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table for each job -->
+                <div class='row col-md-12' ng-if="jobs.length > 0">
+                    <table class="table table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Colour</th>
+                                <th>Label</th>
+                                <th>Status</th>
+                                <th>Bolting time</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr ng-repeat="job in jobs">
+
+                                <td bgcolor="{{job.color}}"></td>
+
+                                <td>{{job.label}}</td>
+
+                                <td ng-if="!job.isRunning">Complete</td>
+                                <td ng-if="job.isRunning" >Running ({{job.lastTime}})</td>
+
+                                <td ng-if="!job.isRunning">{{job.lastTime}}</td>
+                                <td ng-if="job.isRunning" ></td>
+
+                                <td>
+                                    <button type="button" ng-click='deleteSimulation(job)' class="btn btn-secondary btn-sm">Delete</button>
+                                </td>
+                                <td>
+                                    <a ng-if="!job.isRunning" download="{{job.downloadName}}.csv" ng-href="{{job.downloadurl }}">Download</a>
+                                </td>
+                            <tr>
+                        </tbody>
+                    </table>
+                </div> <!-- end of main job stats table -->
+            
+                <!-- Optional Parameters table -->
+                <div ng-if='flags.showParameters'>
+                    <table class="table table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th rowspan='2'>Colour</th>
+                                <th rowspan='2'>Label</th>
+                                <th colspan='4'>Light</th>
+                                <th colspan='4'>Temperature</th>
+                                <th colspan='4'>CO&#8322;</th>
+                            </tr>
+                            <tr>
+                                <th>day</th>
+                                <th>night</th>
+                                <th>day length</th>
+                                <th>twilight</th>
+
+                                <th>day</th>
+                                <th>night</th>
+                                <th>day length</th>
+                                <th>twilight</th>
+
+                                <th>day</th>
+                                <th>night</th>
+                                <th>day length</th>
+                                <th>twilight</th>
+                            </tr>
+                        </thead>
+
+                        <tr ng-repeat="job in jobs">
+
+                            <td bgcolor="{{job.color}}"></td>
+                            <td>{{job.label}}</td>
+
+                            <td>{{job.jobParams.light.day}}</td>
+                            <td>{{job.jobParams.light.night}}</td>
+                            <td>{{job.jobParams.light.dayLength}}</td>
+                            <td>{{job.jobParams.light.twilight}}</td>
+
+                            <td>{{job.jobParams.temperature.day}}</td>
+                            <td>{{job.jobParams.temperature.night}}</td>
+                            <td>{{job.jobParams.temperature.dayLength}}</td>
+                            <td>{{job.jobParams.temperature.twilight}}</td>
+
+                            <td>{{job.jobParams.co2.day}}</td>
+                            <td>{{job.jobParams.co2.night}}</td>
+                            <td>{{job.jobParams.co2.dayLength}}</td>
+                            <td>{{job.jobParams.co2.twilight}}</td>
+                        <tr>
+                    </table>
+                </div>  <!-- end of optional parameters table -->
+    
+                <div class="row">
+                    <div class="col-sm-6 form-group" ng-if="jobs.length > 0">
+                        <label>Show parameters:
+                            <input type='checkbox' ng-model='flags.showParameters'/>
+                        </label>
+                    </div>
+                    <div class="col-sm-6 form-group" ng-if="plotData.length > 0">
+                        <label>Show environmental data plots:
+                            <input type='checkbox' ng-model='flags.showEnvironmentalPlots'/>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Run simulation</div>
+                    <div class="panel-body">
+                        <issf label='Light: total absorbed PAR per unit leaf area (&#181;mol m&#8315;&#178; s&#8315;&#185;)'       
+                              values='jobParams.light'></issf>
+                        <issf label='Temperature (&deg;C)' 
+                              values='jobParams.temperature'></issf>
+                        <issf label='CO&#8322; partial preassure (mmHg)'
+                              values='jobParams.co2'></issf>
+                        <div class="form-group">
+                            <label for='jobLabel'>Label:</label>
+                            <input id="jobLabel" ng-model='jobLabel' class="form-control"'/>
+                        </div>
+                            <!-- Button to run the simulation -->
+                        <div class='row'>
+                            <button type="button" ng-click='runSimulation()' class="btn btn-primary center-block">Run</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- useful for debugging
+                <h2>Plots</h2>
+                {{plots}}
+                <h2>Data</h2>
+                {{plotData}}
+                <h2>Jobs</h2>
+                {{jobs}}
+                -->
+            </div>
+	</div>
+    </body>
+</html>
+

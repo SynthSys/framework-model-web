@@ -1,0 +1,41 @@
+<div class="panel panel-default">
+  <div class="panel-heading">{{label}}</div>
+  <div class="panel-body">
+    <div class="row">
+        <div class='col-xs-6 col-sm-2 col-md-1'>
+            <label for="min">Day value:</label>
+        </div>
+        <div class='col-xs-6 col-sm-4 col-md-2'>
+            <input type="number" class="form-control" id="min" ng-model='values.day' ng-change='change()'/>
+        </div>
+        <div class='col-xs-6 col-sm-2 col-md-1'>
+            <label for="max">Night value:</label>
+        </div>
+        <div class='col-xs-6 col-sm-4 col-md-2'>
+            <input type="number" class="form-control" id="max" ng-model='values.night' ng-change='change()'>
+        </div>
+        <div class='col-xs-6 col-sm-2 col-md-1'>
+            <label for="on">Day length:</label>
+        </div>
+        <div class='col-xs-6 col-sm-4 col-md-2'>
+            <input type="number" class="form-control" id="on" ng-model='values.dayLength' ng-change='change()'/>
+        </div>
+        <div class='col-xs-6 col-sm-2 col-md-1'>
+            <label for="twighlight">Twilight:</label>
+        </div>
+        <div class='col-xs-6 col-sm-4 col-md-2'>
+            <input type="number" class="form-control" id="twighlight" ng-model='values.twilight' ng-change='change()'/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6 col-md-3 form-group">
+            <label>Show graph:
+                <input type='checkbox' ng-model='showGraph'/>
+            </label>
+        </div>
+    </div>
+<div class="my-chart" ng-if='showGraph'>
+    <nvd3 options="plot" data="plotData"></nvd3>
+</div>
+</div>
+</div>

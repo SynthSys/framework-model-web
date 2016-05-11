@@ -189,7 +189,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
         csvData.push("# Temperature (deg C):");
         addIssfToDataDownload(csvData, job.jobParams.temperature);
         csvData.push("\n");
-        csvData.push("# CO2 (mmHg):");
+        csvData.push("# CO2 (Pa):");
         addIssfToDataDownload(csvData, job.jobParams.co2);
         csvData.push("\n");
         
@@ -327,10 +327,40 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     top: 20,
                     right: 20,
                     bottom: 40,
-                    left: 50
+                    left: 70
                 },
                 x: function(d){ return d.t; },
-                y: function(d){ if (d.rosette === null) return null; return 1000 * d.rosette; },
+                y: function(d){ if (d.rosette_fw === null) return null; return 1000 * d.rosette_fw; },
+                useInteractiveGuideline: true,
+                xAxis: {
+                    axisLabel: 'Time (hours)',
+                },
+                yAxis: {
+                    axisLabel: 'Mass (mg)',
+                    tickFormat: function(d){
+                        return d3.format('.03f')(d);
+                    },
+                    axisLabelDistance: 10
+                }
+            },
+            title: {
+                enable: true,
+                text: 'Rosette Biomass (fresh weight)'
+            },
+            environmental : false
+        },        
+        {
+            chart: {
+                type: 'lineChart',
+               
+                margin : {
+                    top: 20,
+                    right: 20,
+                    bottom: 40,
+                    left: 70
+                },
+                x: function(d){ return d.t; },
+                y: function(d){ if (d.root_fw === null) return null; return 1000 * d.root_fw; },
                 useInteractiveGuideline: true,
                 xAxis: {
                     axisLabel: 'Time (hours)'
@@ -340,12 +370,12 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     tickFormat: function(d){
                         return d3.format('.03f')(d);
                     },
-                    axisLabelDistance: -10
+                    axisLabelDistance: 10
                 }
             },
             title: {
                 enable: true,
-                text: 'Rosette Biomass'
+                text: 'Root Biomass (fresh weight)'
             },
             environmental : false
         },
@@ -357,37 +387,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     top: 20,
                     right: 20,
                     bottom: 40,
-                    left: 50
-                },
-                x: function(d){ return d.t; },
-                y: function(d){ if (d.root === null) return null; return 1000 * d.root; },
-                useInteractiveGuideline: true,
-                xAxis: {
-                    axisLabel: 'Time (hours)'
-                },
-                yAxis: {
-                    axisLabel: 'Mass (mg)',
-                    tickFormat: function(d){
-                        return d3.format('.03f')(d);
-                    },
-                    axisLabelDistance: -10
-                }
-            },
-            title: {
-                enable: true,
-                text: 'Root Biomass'
-            },
-            environmental : false
-        },
-        {
-            chart: {
-                type: 'lineChart',
-               
-                margin : {
-                    top: 20,
-                    right: 20,
-                    bottom: 40,
-                    left: 50
+                    left: 70
                 },
                 x: function(d){ return d.t; },
                 y: function(d){ if (d.starch === null) return null; return 1000 * d.starch; },
@@ -400,7 +400,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     tickFormat: function(d){
                         return d3.format('.03f')(d);
                     },
-                    axisLabelDistance: -10
+                    axisLabelDistance: 10
                 }
             },
             title: {
@@ -409,36 +409,6 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
             },
             environmental : false
         },
-//        {
-//            chart: {
-//                type: 'lineChart',
-//               
-//                margin : {
-//                    top: 20,
-//                    right: 20,
-//                    bottom: 40,
-//                    left: 50
-//                },
-//                x: function(d){ return d.t; },
-//                y: function(d){ if (d.mf === null) return null; return 1000 * d.mf; },
-//                useInteractiveGuideline: true,
-//                xAxis: {
-//                    axisLabel: 'Time (hours)'
-//                },
-//                yAxis: {
-//                    axisLabel: 'Mass (mg)',
-//                    tickFormat: function(d){
-//                        return d3.format('.03f')(d);
-//                    },
-//                    axisLabelDistance: -10
-//                }
-//            },
-//            title: {
-//                enable: true,
-//                text: 'Malate and fumarate'
-//            },
-//            environmental : false
-//        },
         {
             chart: {
                 type: 'lineChart',
@@ -447,7 +417,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     top: 20,
                     right: 20,
                     bottom: 40,
-                    left: 50
+                    left: 70
                 },
                 x: function(d){ return d.t; },
                 y: function(d){ return d.light; },
@@ -460,7 +430,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     tickFormat: function(d){
                         return d3.format('.01f')(d);
                     },
-                    axisLabelDistance: -10
+                    axisLabelDistance: 10
                 }
             },
             title: {
@@ -477,7 +447,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     top: 20,
                     right: 20,
                     bottom: 40,
-                    left: 50
+                    left: 70
                 },
                 x: function(d){ return d.t; },
                 y: function(d){ return d.temp; },
@@ -490,7 +460,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     tickFormat: function(d){
                         return d3.format('.01f')(d);
                     },
-                    axisLabelDistance: -10
+                    axisLabelDistance: 10
                 }
             },
             title: {
@@ -507,7 +477,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     top: 20,
                     right: 20,
                     bottom: 40,
-                    left: 50
+                    left: 70
                 },
                 x: function(d){ return d.t; },
                 y: function(d){ return d.co2; },
@@ -516,11 +486,11 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     axisLabel: 'Time (hours)'
                 },
                 yAxis: {
-                    axisLabel: 'CO\u2082 partial preassure (mmHg)',
+                    axisLabel: 'CO\u2082 partial pressure (Pa)',
                     tickFormat: function(d){
                         return d3.format('.01f')(d);
                     },
-                    axisLabelDistance: -10
+                    axisLabelDistance: 10
                 }
             },
             title: {

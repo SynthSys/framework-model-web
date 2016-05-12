@@ -37,12 +37,14 @@ myApp.config(['$compileProvider',
 
 myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', function($scope, $log, $http, $interval) {
     
-    $scope.jobParams = {};
+    $scope.jobParams = { 
+        dayLength : 12,
+        light        : {day:  145,  night :     0, twilight: 0, showGraphOption : true,  showNightValue : true },
+        temperature  : {day:  19.0, night :  19.0, twilight: 0, showGraphOption : true,  showNightValue : true },
+        co2          : {day:  42.0,                twilight: 0, showGraphOption : false, showNightValue : false } 
+    };
     
-    $scope.jobParams.light        = {day:  145,  night :    0,  dayLength: 12, twilight: 0 };
-    $scope.jobParams.temperature  = {day:  19.0, night :  19.0, dayLength: 12, twilight: 0 };
-    $scope.jobParams.co2          = {day:  42.0, night :  42.0, dayLength: 12, twilight: 0 };
-    
+    $scope.jobLabel = "SimulationName";
     $scope.jobs = [];
     $scope.intervalPromise = null;
     
@@ -51,14 +53,33 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
 
     $scope.runSimulation = function() {
         
+        var requestJobParams = {};
+        requestJobParams.light = {};
+        requestJobParams.light.day       = $scope.jobParams.light.day;
+        requestJobParams.light.night     = $scope.jobParams.light.night;
+        requestJobParams.light.dayLength = $scope.jobParams.dayLength;
+        requestJobParams.light.twilight  = $scope.jobParams.light.twilight;
+
+        requestJobParams.temperature = {};
+        requestJobParams.temperature.day       = $scope.jobParams.temperature.day;
+        requestJobParams.temperature.night     = $scope.jobParams.temperature.night;
+        requestJobParams.temperature.dayLength = $scope.jobParams.dayLength;
+        requestJobParams.temperature.twilight  = $scope.jobParams.temperature.twilight;
+
+        requestJobParams.co2 = {};
+        requestJobParams.co2.day       = $scope.jobParams.co2.day;
+        requestJobParams.co2.night     = $scope.jobParams.co2.day;  // Use day for night value
+        requestJobParams.co2.dayLength = $scope.jobParams.dayLength;
+        requestJobParams.co2.twilight  = $scope.jobParams.co2.twilight;
+                
         // Ask web service to run the model simulation
-        $http.post('/modelRunner', $scope.jobParams).success(function newSim(result) {
+        $http.post('/modelRunner', requestJobParams).success(function newSim(result) {
             newJob = {};
             newJob.jobId     = result.id;
             newJob.haveData  = false;
             newJob.isRunning = true;
             newJob.lastTime  = 0;
-            newJob.jobParams = JSON.parse(JSON.stringify($scope.jobParams));
+            newJob.jobParams = JSON.parse(JSON.stringify(requestJobParams));
             newJob.label     = getLabel($scope.jobLabel);
             newJob.downloadName = newJob.label.replace(/ /g,"_");
             addNewJob(newJob);
@@ -511,7 +532,7 @@ myApp.directive("issf", function() {
             
             var dayValue   = $scope.values.day;
             var nightValue = $scope.values.night;
-            var dayLength  = $scope.values.dayLength;
+            var dayLength  = $scope.daylength;
             var twilight   = $scope.values.twilight;
             
             // Initially assume day value is high
@@ -531,7 +552,7 @@ myApp.directive("issf", function() {
         };
 
         function init() {
-            $scope.showGraph = false;
+            $scope.flags = {showGraph : false};
             $scope.plotData = [ {key: "data", values : []} ];
             $scope.computePlotData();
         }
@@ -541,6 +562,10 @@ myApp.directive("issf", function() {
         $scope.change = function () {
             $scope.computePlotData();
         };
+        
+        $scope.$watch('daylength', function() {
+            $scope.computePlotData();
+        });
           
         $scope.plot = {
             chart: {
@@ -574,7 +599,8 @@ myApp.directive("issf", function() {
        controller: controller,
        scope: {
            label : "@",
-           values : "="
+           values : "=",
+           daylength : "="
        }
    }; 
 });

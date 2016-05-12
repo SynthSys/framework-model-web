@@ -181,16 +181,32 @@
                     <div class="panel-heading">Run simulation</div>
                     <div class="panel-body">
                         <issf label='Light: total absorbed PAR per unit leaf area (&#181;mol m&#8315;&#178; s&#8315;&#185;)'       
-                              values='jobParams.light'></issf>
+                              values='jobParams.light' daylength='jobParams.dayLength'></issf>
                         <issf label='Temperature (&deg;C)' 
-                              values='jobParams.temperature'></issf>
-                        <issf label='CO&#8322; partial preassure (mmHg)'
+                              values='jobParams.temperature' daylength='jobParams.dayLength'></issf>
+                        <issf label='CO&#8322; partial preassure (Pa)'
                               values='jobParams.co2'></issf>
-                        <div class="form-group">
-                            <label for='jobLabel'>Label:</label>
-                            <input id="jobLabel" ng-model='jobLabel' class="form-control"'/>
+
+                        
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class='col-xs-6 col-sm-2'>
+                                        <label for="min">Day length (hours):</label>
+                                    </div>
+                                    <div class='col-xs-6 col-sm-4'>
+                                        <input type="number" class="form-control" id="min" ng-model='jobParams.dayLength'/>
+                                    </div>                        
+                                    <div class='col-xs-6 col-sm-2'>
+                                        <label for='jobLabel'>Label:</label>
+                                    </div>
+                                    <div class='col-xs-6 col-sm-4'>
+                                        <input id="jobLabel" ng-model='jobLabel' class="form-control"'/>
+                                    </div>                        
+                                </div>
+                            </div>
                         </div>
-                            <!-- Button to run the simulation -->
+                                <!-- Button to run the simulation -->
                         <div class='row'>
                             <button type="button" ng-click='runSimulation()' class="btn btn-primary center-block">Run</button>
                         </div>
@@ -204,7 +220,7 @@
                 {{plotData}}
                 <h2>Jobs</h2>
                 {{jobs}}
-                -->
+               -->
             </div>
 	</div>
     </body>

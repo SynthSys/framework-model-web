@@ -163,7 +163,6 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
             if (job.isRunning) {
                 $http.get('/modelRunner/'+job.jobId).success((function(job) {
                     return function(result) {
-                        console.log(job.jsondata);
                         job.haveData = true;
                         job.jsondata = result; 
                         job.lastTime = findLastTime(job);

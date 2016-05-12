@@ -5,19 +5,18 @@
  */
 package ed.synthsys.fm;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.*;
 import org.springframework.beans.factory.annotation.*;
+
 /**
  *
  * @author ahume
@@ -35,16 +34,23 @@ public class JobHandler {
     private final String DATA_FILE = "myResultFile.csv";
     
     @Value("${run.command}")    
-    private final String RUN_COMMAND = "./runSimulation";
+    private final static String RUN_COMMAND = "./runSimulation";
     
-    private final String FINISHED_LINE = "Finished";
+    // Helper class used to build the job status from a simulation result
+    private final JobStatusBuilder jobStatusBuilder;
+    
+    // Logger
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobHandler.class);
             
-    public JobHandler() {
+    @Autowired
+    public JobHandler(JobStatusBuilder jobStatusBuilder) {
+        this.jobStatusBuilder = jobStatusBuilder;
     }
     
     public JobStatus createJob(JobParams jobParams) {
         try {
             UUID uid = UUID.randomUUID();
+            LOGGER.info("Started job: {}", uid);
             List<String> command = new ArrayList<>();
             command.add(RUN_COMMAND);
             command.add(uid.toString());
@@ -74,49 +80,28 @@ public class JobHandler {
     }
     
     public JobStatus getJobStatus(String id) {
-        JobStatus jobStatus = new JobStatus(id);
-        
         File jobDir = new File(JOBS_DIR, id);
-        // TODO - check for existing directory etc
+        if (!jobDir.exists()) {
+            LOGGER.error(
+                    "Job directory: {} does not exist. Job {} has failed.",
+                    jobDir.getAbsoluteFile(),id);
+            return jobStatusBuilder.buildFailed(id);
+        }
         
         File dataFile = new File(jobDir, DATA_FILE);
 
-        jobStatus.setStatus(JobStatus.Status.RUNNING);
-        if (dataFile.exists()) {
-
-            // Read the data from the data file
-            try (BufferedReader br = new BufferedReader(new FileReader(dataFile))) {
-
-                String line;
-                while ((line = br.readLine()) != null) {
-                    
-                    if (line.equals(FINISHED_LINE)) {
-                        jobStatus.setStatus(JobStatus.Status.FINISHED);
-                    }    
-                    else {
-                        jobStatus.addData(lineToValuesMap(line));
-                    }
-                }
+        try {
+            Reader reader = null;
+            if (dataFile.exists()) {
+                reader = new FileReader(dataFile);
             }
-            catch(IOException e) {
-                //TODO - do better
-                System.out.println("IO Exceptoin");
-                e.printStackTrace();
-            }
-
+            return jobStatusBuilder.build(id, reader);
         }
-        
-        return jobStatus;
-    }
-    
-    private Map<String,Double> lineToValuesMap(String line) {
-        Map<String,Double> result = new HashMap<>();
-        String[] parts = line.split(",");
-        for( String part : parts) {
-            String[] keyAndValue = part.split(":");
-            Double value = Double.parseDouble(keyAndValue[1]);
-            result.put(keyAndValue[0], value);
+        catch (IOException exception) {
+            LOGGER.error(
+                    "I/O error trying to read result for job: {} error is: {}", 
+                    id, exception.getLocalizedMessage());
+            return jobStatusBuilder.buildFailed(id);
         }
-        return result;
     }
 }

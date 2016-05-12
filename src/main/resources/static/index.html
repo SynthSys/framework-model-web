@@ -95,17 +95,20 @@
 
                                 <td>{{job.label}}</td>
 
-                                <td ng-if="!job.isRunning">Complete</td>
+                                <td ng-if="job.hasCompleted">Complete</td>
                                 <td ng-if="job.isRunning" >Running ({{job.lastTime}})</td>
+                                <td ng-if="job.hasFailed" >Failed</td>
 
-                                <td ng-if="!job.isRunning">{{job.lastTime}}</td>
+                                
+                                <td ng-if="job.hasCompleted">{{job.lastTime}}</td>
                                 <td ng-if="job.isRunning" ></td>
+                                <td ng-if="job.hasFailed" ></td>
 
                                 <td>
                                     <button type="button" ng-click='deleteSimulation(job)' class="btn btn-secondary btn-sm">Delete</button>
                                 </td>
                                 <td>
-                                    <a ng-if="!job.isRunning" download="{{job.downloadName}}.csv" ng-href="{{job.downloadurl }}">Download</a>
+                                    <a ng-if="job.hasCompleted" download="{{job.downloadName}}.csv" ng-href="{{job.downloadurl }}">Download</a>
                                 </td>
                             <tr>
                         </tbody>

@@ -24,7 +24,7 @@ public class ModelRunnerController {
     
     @Autowired
     public ModelRunnerController(JobHandler jobHandler) {
-        this. jobHandler = jobHandler;
+        this.jobHandler = jobHandler;
     }
     
     // This method to allow calling across domains for the moment. Hopefully

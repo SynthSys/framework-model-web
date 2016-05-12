@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class JobStatus {
 
-    public enum Status { RUNNING, FINISHED };
+    public enum Status { RUNNING, FINISHED, FAILED };
     
     
     private Status                         status;

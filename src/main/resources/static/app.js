@@ -75,9 +75,11 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
         // Ask web service to run the model simulation
         $http.post('/modelRunner', requestJobParams).success(function newSim(result) {
             newJob = {};
-            newJob.jobId     = result.id;
-            newJob.haveData  = false;
-            newJob.isRunning = true;
+            newJob.jobId        = result.id;
+            newJob.haveData     = false;
+            newJob.isRunning    = true;
+            newJob.hasFailed    = false;
+            newJob.hasCompleted = false;
             newJob.lastTime  = 0;
             newJob.jobParams = JSON.parse(JSON.stringify($scope.jobParams));
             newJob.label     = getLabel($scope.jobLabel);
@@ -161,11 +163,13 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
             if (job.isRunning) {
                 $http.get('/modelRunner/'+job.jobId).success((function(job) {
                     return function(result) {
+                        console.log(job.jsondata);
                         job.haveData = true;
                         job.jsondata = result; 
                         job.lastTime = findLastTime(job);
                         if (job.jsondata.status === "FINISHED") {
                             job.isRunning = false;
+                            job.hasCompleted = true;
                             addJobToPlots(job);
                             updateJobInPlots(job);
                             
@@ -174,6 +178,11 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                             //var blob = new Blob([ content ], { type : 'text/plain' });
                             var blob = buildDataDownload(job);
                             job.downloadurl = (window.URL || window.webkitURL).createObjectURL( blob );
+                        }
+                        else if (job.jsondata.status === "FAILED") {
+                            job.isRunning    = false;
+                            job.hasCompleted = false;
+                            job.hasFailed    = true;
                         }
                     };
                 })(job));
@@ -305,13 +314,13 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
         var maxTime = -1;
         for (var i=0; i<$scope.jobs.length; i++) {
             var j = $scope.jobs[i];
-            if ((!j.isRunning) && j.lastTime > maxTime) {
+            if ((j.hasCompleted) && j.lastTime > maxTime) {
                 maxTime = j.lastTime;
             }
         }
         for (var i=0; i<$scope.jobs.length; i++) {
             var j = $scope.jobs[i];
-            if ((!j.isRunning)) {
+            if ((j.hasCompleted)) {
                 var plotData = getJobPlotData(j.jobId);
                 if (plotData.values.length > maxTime) {
                     // Need to trim the data for this job

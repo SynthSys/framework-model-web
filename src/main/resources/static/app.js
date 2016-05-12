@@ -79,7 +79,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
             newJob.haveData  = false;
             newJob.isRunning = true;
             newJob.lastTime  = 0;
-            newJob.jobParams = JSON.parse(JSON.stringify(requestJobParams));
+            newJob.jobParams = JSON.parse(JSON.stringify($scope.jobParams));
             newJob.label     = getLabel($scope.jobLabel);
             newJob.downloadName = newJob.label.replace(/ /g,"_");
             addNewJob(newJob);
@@ -204,14 +204,18 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
             }
         }
         // Write the parameters
+        csvData.push("# Day length (hours): " + job.jobParams.dayLength);
+        csvData.push("\n");
         csvData.push("# Light PAR (micromol m-2 s-1):");
-        addIssfToDataDownload(csvData, job.jobParams.light);
+        csvData.push(" day: "   + job.jobParams.light.day);
+        csvData.push(" night: " + job.jobParams.light.night);
         csvData.push("\n");
         csvData.push("# Temperature (deg C):");
-        addIssfToDataDownload(csvData, job.jobParams.temperature);
+        csvData.push(" day: "   + job.jobParams.temperature.day);
+        csvData.push(" night: " + job.jobParams.temperature.night);
         csvData.push("\n");
         csvData.push("# CO2 (Pa):");
-        addIssfToDataDownload(csvData, job.jobParams.co2);
+        csvData.push(" day: " + job.jobParams.co2.day);
         csvData.push("\n");
         
         // Write the header
@@ -237,13 +241,6 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
         return new Blob( csvData, { type : 'text/plain' });
     };
     
-    addIssfToDataDownload = function(csvData, issf) {
-        csvData.push(" day: "        + issf.day);
-        csvData.push(" night: "      + issf.night);
-        csvData.push(" day length: " + issf.dayLength);
-        csvData.push(" twilight: "  + issf.twilight);
-    };
-     
     addJobToPlots = function(job) {
         $scope.plotData.push(
                 { 
@@ -532,7 +529,7 @@ myApp.directive("issf", function() {
             
             var dayValue   = $scope.values.day;
             var nightValue = $scope.values.night;
-            var dayLength  = $scope.daylength;
+            var dayLength  = $scope.dayLength;
             var twilight   = $scope.values.twilight;
             
             // Initially assume day value is high
@@ -563,7 +560,7 @@ myApp.directive("issf", function() {
             $scope.computePlotData();
         };
         
-        $scope.$watch('daylength', function() {
+        $scope.$watch('dayLength', function() {
             $scope.computePlotData();
         });
           
@@ -600,7 +597,7 @@ myApp.directive("issf", function() {
        scope: {
            label : "@",
            values : "=",
-           daylength : "="
+           dayLength : "="
        }
    }; 
 });

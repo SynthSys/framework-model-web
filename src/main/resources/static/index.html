@@ -119,25 +119,20 @@
                             <tr>
                                 <th rowspan='2'>Colour</th>
                                 <th rowspan='2'>Label</th>
-                                <th colspan='4'>Light</th>
-                                <th colspan='4'>Temperature</th>
-                                <th colspan='4'>CO&#8322;</th>
+                                <th rowspan='2'>Day Length</th>
+                                
+                                <th colspan='2'>Light</th>
+                                <th colspan='2'>Temperature</th>
+                                <th colspan='1'>CO&#8322;</th>
                             </tr>
                             <tr>
                                 <th>day</th>
                                 <th>night</th>
-                                <th>day length</th>
-                                <th>twilight</th>
 
                                 <th>day</th>
                                 <th>night</th>
-                                <th>day length</th>
-                                <th>twilight</th>
 
                                 <th>day</th>
-                                <th>night</th>
-                                <th>day length</th>
-                                <th>twilight</th>
                             </tr>
                         </thead>
 
@@ -145,21 +140,15 @@
 
                             <td bgcolor="{{job.color}}"></td>
                             <td>{{job.label}}</td>
+                            <td>{{job.jobParams.dayLength}}</td>
 
                             <td>{{job.jobParams.light.day}}</td>
                             <td>{{job.jobParams.light.night}}</td>
-                            <td>{{job.jobParams.light.dayLength}}</td>
-                            <td>{{job.jobParams.light.twilight}}</td>
-
+ 
                             <td>{{job.jobParams.temperature.day}}</td>
                             <td>{{job.jobParams.temperature.night}}</td>
-                            <td>{{job.jobParams.temperature.dayLength}}</td>
-                            <td>{{job.jobParams.temperature.twilight}}</td>
-
+ 
                             <td>{{job.jobParams.co2.day}}</td>
-                            <td>{{job.jobParams.co2.night}}</td>
-                            <td>{{job.jobParams.co2.dayLength}}</td>
-                            <td>{{job.jobParams.co2.twilight}}</td>
                         <tr>
                     </table>
                 </div>  <!-- end of optional parameters table -->
@@ -181,9 +170,9 @@
                     <div class="panel-heading">Run simulation</div>
                     <div class="panel-body">
                         <issf label='Light: total absorbed PAR per unit leaf area (&#181;mol m&#8315;&#178; s&#8315;&#185;)'       
-                              values='jobParams.light' daylength='jobParams.dayLength'></issf>
+                              values='jobParams.light' day-length='jobParams.dayLength'></issf>
                         <issf label='Temperature (&deg;C)' 
-                              values='jobParams.temperature' daylength='jobParams.dayLength'></issf>
+                              values='jobParams.temperature' day-length='jobParams.dayLength'></issf>
                         <issf label='CO&#8322; partial preassure (Pa)'
                               values='jobParams.co2'></issf>
 

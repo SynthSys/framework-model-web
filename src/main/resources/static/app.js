@@ -386,7 +386,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
                     left: 70
                 },
                 x: function(d){ return d.t; },
-                y: function(d){ if (d.root_fw === null) return null; return 1000 * d.root_fw; },
+                y: function(d){ if (d.root === null) return null; return 1000 * d.root; },
                 useInteractiveGuideline: true,
                 xAxis: {
                     axisLabel: 'Time (hours)'
@@ -401,7 +401,7 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
             },
             title: {
                 enable: true,
-                text: 'Root Biomass (fresh weight)'
+                text: 'Root Biomass (dry weight)'
             },
             environmental : false
         },
@@ -432,6 +432,36 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
             title: {
                 enable: true,
                 text: 'Starch'
+            },
+            environmental : false
+        },
+                {
+            chart: {
+                type: 'lineChart',
+               
+                margin : {
+                    top: 20,
+                    right: 20,
+                    bottom: 40,
+                    left: 70
+                },
+                x: function(d){ return d.t; },
+                y: function(d){ if (d.leaf_num === null) return null; return d.leaf_num; },
+                useInteractiveGuideline: true,
+                xAxis: {
+                    axisLabel: 'Time (hours)'
+                },
+                yAxis: {
+                    axisLabel: '# leaves',
+                    tickFormat: function(d){
+                        return d3.format('.0f')(d);
+                    },
+                    axisLabelDistance: 0
+                }
+            },
+            title: {
+                enable: true,
+                text: 'Number of leaves'
             },
             environmental : false
         },

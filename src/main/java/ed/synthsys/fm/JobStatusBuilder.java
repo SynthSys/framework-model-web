@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 /**
@@ -62,16 +63,29 @@ public class JobStatusBuilder {
         return jobStatus;
     }
     
-    /** 
-     * Gets a job status for a failed job.
+    /**
+     * Builds a job status with no data.
      * 
-     * @param id  job ID
+     * @param id      job id
+     * @param status  job status
      * 
-     * @return JobStatus object in failed status and containing no data 
+     * @return new job status object.
      */
-    public JobStatus buildFailed(String id) {
+    public JobStatus build(UUID id, JobStatus.Status status) {
+        return build(id.toString(), status);
+    }
+    
+    /**
+     * Builds a job status with no data.
+     * 
+     * @param id      job id
+     * @param status  job status
+     * 
+     * @return new job status object.
+     */
+    public JobStatus build(String id, JobStatus.Status status) {
         JobStatus jobStatus = new JobStatus(id);
-        jobStatus.setStatus(JobStatus.Status.FAILED);
+        jobStatus.setStatus(status);
         return jobStatus;
     }
     

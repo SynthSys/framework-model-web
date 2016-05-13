@@ -18,8 +18,7 @@ import org.springframework.stereotype.*;
 import org.springframework.beans.factory.annotation.*;
 
 /**
- *
- * @author ahume
+ * Handles the running of new jobs and returning the current status of jobs.
  */
 @Component
 public class JobHandler {
@@ -42,15 +41,28 @@ public class JobHandler {
     // Logger
     private static final Logger LOGGER = LoggerFactory.getLogger(JobHandler.class);
             
+    /**
+     * Constructor
+     * 
+     * @param jobStatusBuilder helper used to build job status objects.
+     */
     @Autowired
     public JobHandler(JobStatusBuilder jobStatusBuilder) {
         this.jobStatusBuilder = jobStatusBuilder;
     }
-    
+
+    /**
+     * Creates a new job.  This involves running executing a process to run a
+     * job as an operating system process.
+     * 
+     * @param jobParams job parameters
+     * 
+     * @return  job status
+     */
     public JobStatus createJob(JobParams jobParams) {
+        UUID uid = UUID.randomUUID();
         try {
-            UUID uid = UUID.randomUUID();
-            LOGGER.info("Started job: {}", uid);
+            LOGGER.info("Starting job: {}", uid);
             List<String> command = new ArrayList<>();
             command.add(RUN_COMMAND);
             command.add(uid.toString());
@@ -69,39 +81,50 @@ public class JobHandler {
             
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.directory(WORKING_DIR);
-            Process p = pb.start();
-            JobStatus jobStatus = new JobStatus(uid.toString());
-            return jobStatus;
+            pb.start();
+            return jobStatusBuilder.build(uid, JobStatus.Status.RUNNING);
         } catch (IOException ex) {
-            // TODO - need to handle this much better
-                System.err.println("IOException");
+            LOGGER.error(
+                "I/O error while trying to run job: {} error is: {}", 
+                uid, ex.getLocalizedMessage());
+            return jobStatusBuilder.build(uid, JobStatus.Status.FAILED);
         }
-        return null;
     }
     
+    /**
+     * Gets the job status for the specified job id.
+     * 
+     * @param id job id
+     * 
+     * @return job status
+     */
     public JobStatus getJobStatus(String id) {
         File jobDir = new File(JOBS_DIR, id);
         if (!jobDir.exists()) {
             LOGGER.error(
                     "Job directory: {} does not exist. Job {} has failed.",
                     jobDir.getAbsoluteFile(),id);
-            return jobStatusBuilder.buildFailed(id);
+            return jobStatusBuilder.build(id, JobStatus.Status.FAILED);
         }
         
         File dataFile = new File(jobDir, DATA_FILE);
 
         try {
             Reader reader = null;
+            
             if (dataFile.exists()) {
                 reader = new FileReader(dataFile);
             }
+            // If is not an error if the file does it exist, it may not have
+            // been created yet.
+            
             return jobStatusBuilder.build(id, reader);
         }
         catch (IOException exception) {
             LOGGER.error(
                     "I/O error trying to read result for job: {} error is: {}", 
                     id, exception.getLocalizedMessage());
-            return jobStatusBuilder.buildFailed(id);
+            return jobStatusBuilder.build(id, JobStatus.Status.FAILED);
         }
     }
 }

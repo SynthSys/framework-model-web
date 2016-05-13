@@ -14,33 +14,43 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
- * @author ahume
+ * Controller for the Model Runner web service.
  */
 @RestController()
 public class ModelRunnerController {
-    
+
+    // Job hander user to submit jobs and get the job status
     private final JobHandler jobHandler;
     
+    /**
+     * Constructor.
+     * 
+     * @param jobHandler  job handler to process jobs
+     */
     @Autowired
     public ModelRunnerController(JobHandler jobHandler) {
         this.jobHandler = jobHandler;
     }
     
-    // This method to allow calling across domains for the moment. Hopefully
-    // when deployed will be in one domain
-    // see: https://itsmebhavin.wordpress.com/2014/07/09/corsangularjs-no-access-control-allow-origin-header-is-present-on-the-requested-resource-web-api-angularjs/
-    @RequestMapping(value="/proxy.html", method=GET)
-    public String getProxy() {
-        return "<!DOCTYPE HTML>\n" +
-               "<script src=”//rawgit.com/jpillora/xdomain/gh-pages/dist/0.6/xdomain.js” master=”*”></script>\n";
-    }
-
+    /**
+     * Runs a new job.
+     * 
+     * @param jobParams parameters for the job to run.
+     * 
+     * @return the job status
+     */
     @RequestMapping(value="/modelRunner", method=POST)
-    public JobStatus runJob(@RequestBody JobParams input) {
-        return jobHandler.createJob(input);
+    public JobStatus runJob(@RequestBody JobParams jobParams) {
+        return jobHandler.createJob(jobParams);
     }
     
+    /**
+     * Gets the current status of a job.
+     * 
+     * @param jobId job id
+     * 
+     * @return job status
+     */
     @RequestMapping(value="/modelRunner/{jobId}", method=GET)
     public JobStatus getJobStatus(@PathVariable String jobId) {
         return jobHandler.getJobStatus(jobId);

@@ -6,6 +6,7 @@
 package ed.synthsys.fm;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +133,8 @@ public class JobStatusBuilderTests {
     @Test
     public void testNullReader() throws IOException {
         JobStatusBuilder jsb = new JobStatusBuilder();
-        JobStatus js = jsb.build(ID, null);
+        Reader reader = null;
+        JobStatus js = jsb.build(ID, reader);
         assertEquals("Status value is incorrect", 
                 JobStatus.Status.RUNNING, js.getStatus());
     }
@@ -145,11 +147,28 @@ public class JobStatusBuilderTests {
     @Test
     public void testFailedJobStatusCreation() throws IOException {
         JobStatusBuilder jsb = new JobStatusBuilder();
-        JobStatus js = jsb.buildFailed(ID);
+        JobStatus js = jsb.build(ID, JobStatus.Status.FAILED);
         assertEquals("Status value is incorrect", 
                 JobStatus.Status.FAILED, js.getStatus());
         assertEquals("Status should have no data",
                 0, js.getData().size());
+        assertEquals("Id value is incorrect", js.getId(), ID);
+    }
+
+    /**
+     * Tests creating a running job with no data.
+     * 
+     * @throws java.io.IOException
+     */
+    @Test
+    public void testRunningJobStatusCreation() throws IOException {
+        JobStatusBuilder jsb = new JobStatusBuilder();
+        JobStatus js = jsb.build(ID, JobStatus.Status.RUNNING);
+        assertEquals("Status value is incorrect", 
+                JobStatus.Status.RUNNING, js.getStatus());
+        assertEquals("Status should have no data",
+                0, js.getData().size());
+        assertEquals("Id value is incorrect", js.getId(), ID);
     }
 
     /**

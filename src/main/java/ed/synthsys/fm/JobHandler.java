@@ -33,7 +33,7 @@ public class JobHandler {
     private final String DATA_FILE = "myResultFile.csv";
     
     @Value("${run.command}")    
-    private final static String RUN_COMMAND = "./runSimulation";
+    private final String RUN_COMMAND = "./runSimulation";
     
     // Helper class used to build the job status from a simulation result
     private final JobStatusBuilder jobStatusBuilder;

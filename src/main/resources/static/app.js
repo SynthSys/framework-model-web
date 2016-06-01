@@ -28,6 +28,22 @@
 
 var myApp = angular.module('FMSimulator', ['nvd3']);
 
+myApp.config(['$httpProvider', function($httpProvider) {
+    //initialize get if not there
+    if (!$httpProvider.defaults.headers.get) {
+        $httpProvider.defaults.headers.get = {};    
+    }    
+
+    // Answer edited to include suggestions from comments
+    // because previous version of code introduced browser-related errors
+
+    //disable IE ajax request caching
+    $httpProvider.defaults.headers.get['If-Modified-Since'] = 'Mon, 26 Jul 1997 05:00:00 GMT';
+    // extra
+    $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+    $httpProvider.defaults.headers.get['Pragma'] = 'no-cache';
+}]);
+
 // This is required to support the download feature
 myApp.config(['$compileProvider',
     function ($compileProvider) {
@@ -36,7 +52,7 @@ myApp.config(['$compileProvider',
 
 
 myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', function($scope, $log, $http, $interval) {
-    
+
     $scope.jobParams = { 
         dayLength : 12,
         light        : {day:  145,  night :     0, twilight: 0, showGraphOption : true,  showNightValue : true },

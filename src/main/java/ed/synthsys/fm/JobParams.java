@@ -39,14 +39,17 @@ public class JobParams {
     private InputSignalStepFunction light;
     private InputSignalStepFunction temperature;
     private InputSignalStepFunction co2;
+    private String clockGenotype;
     
-    public InputSignalStepFunction getLight()       { return light;       }
-    public InputSignalStepFunction getTemperature() { return temperature; }
-    public InputSignalStepFunction getCo2()         { return co2;         }
+    public InputSignalStepFunction getLight()         { return light;         }
+    public InputSignalStepFunction getTemperature()   { return temperature;   }
+    public InputSignalStepFunction getCo2()           { return co2;           }
+    public String                  getClockGenotype() { return clockGenotype; }
     
-    public void setLight(InputSignalStepFunction issf)       { light       = issf;}
-    public void setTemperature(InputSignalStepFunction issf) { temperature = issf;}
-    public void setCo2(InputSignalStepFunction issf)         { co2         = issf;}
+    public void setLight(InputSignalStepFunction issf)       { light         = issf;}
+    public void setTemperature(InputSignalStepFunction issf) { temperature   = issf;}
+    public void setCo2(InputSignalStepFunction issf)         { co2           = issf;}
+    public void setClockGenotype(String genotype)            { clockGenotype = genotype;}
     
     public JobParams() {
     }

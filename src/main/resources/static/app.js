@@ -57,7 +57,8 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
         dayLength : 12,
         light        : {day:  145,  night :     0, twilight: 0, showGraphOption : true,  showNightValue : true },
         temperature  : {day:  19.0, night :  19.0, twilight: 0, showGraphOption : true,  showNightValue : true },
-        co2          : {day:  42.0,                twilight: 0, showGraphOption : false, showNightValue : false } 
+        co2          : {day:  42.0,                twilight: 0, showGraphOption : false, showNightValue : false }, 
+        clockGenotype : 'WT' 
     };
     
     $scope.jobLabel = "SimulationName";
@@ -87,7 +88,9 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
         requestJobParams.co2.night     = $scope.jobParams.co2.day;  // Use day for night value
         requestJobParams.co2.dayLength = $scope.jobParams.dayLength;
         requestJobParams.co2.twilight  = $scope.jobParams.co2.twilight;
-                
+             
+        requestJobParams.clockGenotype = $scope.jobParams.clockGenotype;
+   
         // Ask web service to run the model simulation
         $http.post('/modelRunner', requestJobParams).success(function newSim(result) {
             newJob = {};
@@ -240,6 +243,8 @@ myApp.controller('mainController', ['$scope', '$log', '$http', '$interval', func
         csvData.push("\n");
         csvData.push("# CO2 (Pa):");
         csvData.push(" day: " + job.jobParams.co2.day);
+        csvData.push("\n");
+        csvData.push("# Clock Genotype : " + job.jobParams.clockGenotype);
         csvData.push("\n");
         
         // Write the header

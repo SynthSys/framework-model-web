@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!<DOCTYPE html>
 <html lang="en-us" ng-app="FMSimulator">
     <head>
         <title>Digital Arabidopsis</title>
@@ -37,10 +37,11 @@
                 <h1>Digital Arabidopsis Simulator</h1>
 
                 <p>
-                    This simulator runs the  Arabidopsis Framework Model v2.1 (Chew et al., unpublished), 
+                    This simulator runs the  Arabidopsis Framework Model v2.0
+                    (<a href="https://doi.org/10.1101/105437">Chew et al., bioRxiv 2017</a>), 
                     which shares many components with the published Framework Model v1.0 
                     (<a href="http://www.ncbi.nlm.nih.gov/pubmed/25197087">Chew et al. 2014</a>). 
-                    FMv2.1 additionally models the control of starch degradation, hypocotyl elongation and 
+                    FMv2 additionally models the control of starch degradation, hypocotyl elongation and 
                     flowering time by the circadian clock, using published models 
                     (<a href="http://dx.doi.org/10.1098/rsif.2013.0979">Seaton et al. 2014</a>; 
                     <a href="http://dx.doi.org/10.15252/msb.20145766">Seaton et al. 2015</a>).
@@ -51,7 +52,7 @@
                     and click on the Run button. Data plots for the simulation will
                     appear when the simulation has completed.  This may take a few
                     minutes. You do not have to wait for a simulation to complete
-                    before start to run another simulation - just change the parameters
+                    before starting to run another simulation - just change the parameters
                     and click Run again.
                 </p>
                 <p>
@@ -122,6 +123,8 @@
                                 <th colspan='2'>Light</th>
                                 <th colspan='2'>Temperature</th>
                                 <th colspan='1'>CO&#8322;</th>
+
+                                <th rowspan='2'>Clock genotype</th>
                             </tr>
                             <tr>
                                 <th>day</th>
@@ -147,6 +150,8 @@
                             <td>{{job.jobParams.temperature.night}}</td>
  
                             <td>{{job.jobParams.co2.day}}</td>
+
+                            <td>{{job.jobParams.clockGenotype}}</td>
                         <tr>
                     </table>
                 </div>  <!-- end of optional parameters table -->
@@ -189,11 +194,23 @@
                                     </div>
                                     <div class='col-xs-6 col-sm-4'>
                                         <input id="jobLabel" ng-model='jobLabel' class='form-control'/>
-                                    </div>                        
+                                    </div>                
+                                </div>
+                                <div class="row">
+                                    <div class='col-xs-6 col-sm-2'>
+                                        <label for='clockGenotype'>Clock genotype:</label>
+                                    </div>
+                                    <div class='col-xs-6 col-sm-4'>
+				      <select name="clockGenotype" ng-model="jobParams.clockGenotype">
+					<option value="WT">WT</option>
+					<option value="prr7prr9">prr7prr9</option>
+				      </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                                <!-- Button to run the simulation -->
+                               
+                        <!-- Button to run the simulation -->
                         <div class='row'>
                             <button type="button" ng-click='runSimulation()' class="btn btn-primary center-block">Run</button>
                         </div>

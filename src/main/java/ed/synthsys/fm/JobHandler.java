@@ -78,6 +78,7 @@ public class JobHandler {
             command.add(Double.toString(jobParams.getCo2().getNight()));
             command.add(Double.toString(jobParams.getCo2().getDayLength()));
             command.add(Double.toString(jobParams.getCo2().getTwilight()));
+            command.add(jobParams.getClockGenotype());
             
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.directory(WORKING_DIR);

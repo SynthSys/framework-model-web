@@ -5,7 +5,7 @@
 
 	<groupId>ed.synthsys.fm</groupId>
 	<artifactId>FrameworkModelRestService</artifactId>
-	<version>1.0</version>
+	<version>3.3.0</version>
 	<packaging>jar</packaging>
 
 	<name>FrameworkModelRestService</name>
@@ -14,13 +14,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.2.RELEASE</version>
+		<version>3.3.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
 	</properties>
 
 	<dependencies>
@@ -52,8 +52,14 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+			<scope>test</scope>                                                
 		</dependency>
+                <!-- Had to be added so the old test will run after upgrading to SB2.6 from 2.3 -->
+                <dependency>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                    <scope>test</scope>
+                </dependency>                
 	</dependencies>
 	
 	<build>
